@@ -62,9 +62,14 @@ module Salus::Scanners
     end
 
     def version
-      shell_return = run_shell('cargo-audit --version')
-      # stdout looks like "cargo-audit 0.12.0\n"
-      shell_return.stdout&.split&.dig(1)
+      begin
+        shell_return = run_shell('cargo-audit --version')
+        # stdout looks like "cargo-audit 0.12.0\n"
+        shell_return.stdout&.split&.dig(1)
+      rescue SystemCallError
+        # If there is an error calling cargo-audit, return an empty version
+        ''
+      end
     end
 
     def self.supported_languages
